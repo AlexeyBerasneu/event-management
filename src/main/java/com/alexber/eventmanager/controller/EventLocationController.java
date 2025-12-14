@@ -1,7 +1,7 @@
 package com.alexber.eventmanager.controller;
 
-import com.alexber.eventmanager.entity.EventLocation;
-import com.alexber.eventmanager.entity.EventLocationDto;
+import com.alexber.eventmanager.entity.eventlocation.EventLocation;
+import com.alexber.eventmanager.entity.eventlocation.EventLocationDto;
 import com.alexber.eventmanager.service.EventLocationService;
 import com.alexber.eventmanager.util.EventLocationDtoConverter;
 import jakarta.validation.Valid;

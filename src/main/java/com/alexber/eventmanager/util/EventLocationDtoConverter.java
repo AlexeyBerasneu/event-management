@@ -1,7 +1,7 @@
 package com.alexber.eventmanager.util;
 
-import com.alexber.eventmanager.entity.EventLocation;
-import com.alexber.eventmanager.entity.EventLocationDto;
+import com.alexber.eventmanager.entity.eventlocation.EventLocation;
+import com.alexber.eventmanager.entity.eventlocation.EventLocationDto;
 import org.springframework.stereotype.Component;
 
 @Component

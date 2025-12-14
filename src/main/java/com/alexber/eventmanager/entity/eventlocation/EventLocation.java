@@ -1,4 +1,4 @@
-package com.alexber.eventmanager.entity;
+package com.alexber.eventmanager.entity.eventlocation;
 
 public record EventLocation(
         Long id,
