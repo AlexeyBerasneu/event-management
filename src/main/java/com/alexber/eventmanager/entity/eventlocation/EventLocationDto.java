@@ -3,21 +3,22 @@ package com.alexber.eventmanager.entity.eventlocation;
 import jakarta.validation.constraints.*;
 
 public record EventLocationDto(
-        @Null
+        @Null(message = "Id must be null")
         Long id,
 
         @NotBlank
-        @Size(max = 150)
+        @Size(message = "Name must be no more then 150 letters",max = 150)
         String name,
 
         @NotBlank
-        @Size(max = 150)
+        @Size(message = "Name must be no more then 150 letters",max = 150)
         String address,
 
         @NotNull
-        @Min(5)
+        @Min(message = "Capacity must be no less then 5 participates",value = 5)
         Integer capacity,
 
+        @NotBlank
         String description
 ) {
 }
