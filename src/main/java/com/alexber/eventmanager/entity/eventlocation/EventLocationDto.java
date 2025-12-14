@@ -1,4 +1,4 @@
-package com.alexber.eventmanager.entity;
+package com.alexber.eventmanager.entity.eventlocation;
 
 import jakarta.validation.constraints.*;
 

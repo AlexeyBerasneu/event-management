@@ -1,7 +1,7 @@
 package com.alexber.eventmanager.service;
 
-import com.alexber.eventmanager.entity.EventLocation;
-import com.alexber.eventmanager.entity.EventLocationEntity;
+import com.alexber.eventmanager.entity.eventlocation.EventLocation;
+import com.alexber.eventmanager.entity.eventlocation.EventLocationEntity;
 import com.alexber.eventmanager.repository.EventLocationRepository;
 import com.alexber.eventmanager.util.EventLocationEntityConverter;
 import jakarta.persistence.EntityNotFoundException;
