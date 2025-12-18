@@ -3,7 +3,7 @@ package com.alexber.eventmanager.service;
 import com.alexber.eventmanager.entity.eventlocation.EventLocation;
 import com.alexber.eventmanager.entity.eventlocation.EventLocationEntity;
 import com.alexber.eventmanager.repository.EventLocationRepository;
-import com.alexber.eventmanager.util.EventLocationEntityConverter;
+import com.alexber.eventmanager.util.converter.EventLocationEntityConverter;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +44,8 @@ public class EventLocationService {
 
     public EventLocation getEventLocation(Long locationId) {
         log.debug("Fetching event location id={}", locationId);
-        EventLocationEntity foundEventLocaton = checkExistingEventLocation(locationId);
-        return eventLocationEntityConverter.toDomain(foundEventLocaton);
+        EventLocationEntity foundEventLocation = checkExistingEventLocation(locationId);
+        return eventLocationEntityConverter.toDomain(foundEventLocation);
     }
 
     public void deleteEventLocation(Long locationId) {
