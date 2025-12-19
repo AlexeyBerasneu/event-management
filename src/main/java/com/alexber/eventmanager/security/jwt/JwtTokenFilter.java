@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
+    private final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
     private final JwtTokenManager jwtTokenManager;
     private final UserService userService;

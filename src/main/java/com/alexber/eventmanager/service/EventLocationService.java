@@ -3,7 +3,7 @@ package com.alexber.eventmanager.service;
 import com.alexber.eventmanager.entity.eventlocation.EventLocation;
 import com.alexber.eventmanager.entity.eventlocation.EventLocationEntity;
 import com.alexber.eventmanager.repository.EventLocationRepository;
-import com.alexber.eventmanager.util.converter.EventLocationEntityConverter;
+import com.alexber.eventmanager.util.EventLocationEntityConverter;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class EventLocationService {
 
-    private final Logger log = LoggerFactory.getLogger(EventLocationService.class);
+    private final Logger logger = LoggerFactory.getLogger(EventLocationService.class);
 
     private final EventLocationRepository eventLocationRepository;
     private final EventLocationEntityConverter eventLocationEntityConverter;
@@ -26,7 +26,7 @@ public class EventLocationService {
     }
 
     public List<EventLocation> findAllEventLocations() {
-        log.debug("Fetching all event locations");
+        logger.debug("Fetching all event locations");
         return eventLocationRepository.findAll()
                 .stream()
                 .map(eventLocationEntityConverter::toDomain)
@@ -34,7 +34,7 @@ public class EventLocationService {
     }
 
     public EventLocation createLocation(EventLocation eventLocation) {
-        log.info("Creating event location with name='{}'", eventLocation.name());
+        logger.info("Creating event location with name='{}'", eventLocation.name());
         if (eventLocationRepository.existsByName(eventLocation.name())) {
             throw new IllegalArgumentException("Event name already exists");
         }
@@ -43,19 +43,19 @@ public class EventLocationService {
     }
 
     public EventLocation getEventLocation(Long locationId) {
-        log.debug("Fetching event location id={}", locationId);
-        EventLocationEntity foundEventLocation = checkExistingEventLocation(locationId);
-        return eventLocationEntityConverter.toDomain(foundEventLocation);
+        logger.debug("Fetching event location id={}", locationId);
+        EventLocationEntity foundEventLocaton = checkExistingEventLocation(locationId);
+        return eventLocationEntityConverter.toDomain(foundEventLocaton);
     }
 
     public void deleteEventLocation(Long locationId) {
-        log.info("Deleting event location id={}", locationId);
+        logger.info("Deleting event location id={}", locationId);
         checkExistingEventLocation(locationId);
         eventLocationRepository.deleteById(locationId);
     }
 
     public EventLocation updateEventLocation(Long locationId, EventLocation eventLocationToUpdate) {
-        log.info("Updating event location id={}", locationId);
+        logger.info("Updating event location id={}", locationId);
         checkExistingEventLocation(locationId);
         EventLocationEntity toUpdate = eventLocationEntityConverter.toEntity(eventLocationToUpdate);
         toUpdate.setId(locationId);

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/locations")
 public class EventLocationController {
 
-    private final Logger log = LoggerFactory.getLogger(EventLocationController.class);
+    private final Logger logger = LoggerFactory.getLogger(EventLocationController.class);
     private final EventLocationService eventLocationService;
     private final EventLocationDtoConverter eventLocationDtoConverter;
 
@@ -31,7 +31,7 @@ public class EventLocationController {
 
     @GetMapping
     public List<EventLocationDto> getAllEventLocations() {
-        log.info("Get all locations");
+        logger.info("Get all locations");
         return eventLocationService.findAllEventLocations()
                 .stream()
                 .map(eventLocationDtoConverter::toDto)
@@ -42,7 +42,7 @@ public class EventLocationController {
     public ResponseEntity<EventLocationDto> createEventLocation(@RequestBody
                                                                 @Valid
                                                                 EventLocationDto eventLocationDto) {
-        log.info("Create new location");
+        logger.info("Create new location");
         EventLocation createdEventLocation = eventLocationService.createLocation(eventLocationDtoConverter.toDomain(eventLocationDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(eventLocationDtoConverter.toDto(createdEventLocation));
     }
@@ -52,7 +52,7 @@ public class EventLocationController {
                                                              @NotNull
                                                              @Positive
                                                              Long locationId) {
-        log.info("Get location by id");
+        logger.info("Get location by id");
         EventLocation foundEventLocation = eventLocationService.getEventLocation(locationId);
         return ResponseEntity.ok(eventLocationDtoConverter.toDto(foundEventLocation));
     }
@@ -62,7 +62,7 @@ public class EventLocationController {
                                                     @NotNull
                                                     @Positive
                                                     Long locationId) {
-        log.info("Delete location");
+        logger.info("Delete location");
         eventLocationService.deleteEventLocation(locationId);
         return ResponseEntity.noContent().build();
     }
@@ -77,7 +77,7 @@ public class EventLocationController {
                                                                 EventLocationDto eventLocationDto
 
     ) {
-        log.info("Update location");
+        logger.info("Update location");
         EventLocation updatedEventLocation = eventLocationService.updateEventLocation(locationId, eventLocationDtoConverter.toDomain(eventLocationDto));
         return ResponseEntity.ok(eventLocationDtoConverter.toDto(updatedEventLocation));
     }

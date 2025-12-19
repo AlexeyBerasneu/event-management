@@ -2,6 +2,7 @@ package com.alexber.eventmanager.security.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +12,17 @@ import java.util.Date;
 @Component
 public class JwtTokenManager {
 
-    private final SecretKey secretKey;
-    private final Long tokenValidityInSeconds;
+    @Value("${jwt.secret-key}")
+    private String key;
 
-    public JwtTokenManager(@Value("${jwt.secret-key}") String  secretKey, @Value("${jwt.lifetime}") Long tokenValidityInSeconds) {
-        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
-        this.tokenValidityInSeconds = tokenValidityInSeconds;
+    @Value("${jwt.lifetime}")
+    private Long tokenValidityInSeconds;
+
+    private SecretKey secretKey;
+
+    @PostConstruct
+    public void init() {
+        secretKey = Keys.hmacShaKeyFor(key.getBytes());
     }
 
     public String generateToken(String login) {
