@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    Logger log = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
+    private final Logger log = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
     private final ObjectMapper objectMapper;
 
     public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
@@ -27,7 +27,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        log.error("Access denied", accessDeniedException);
+        log.info("Access denied", accessDeniedException);
         ServerErrorDto serverError = new ServerErrorDto(
                 "Forbidden",
                 accessDeniedException.getMessage(),

@@ -12,21 +12,21 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Login must not be blank")
     @Column(name = "login", unique = true, nullable = false)
     private String login;
 
-    @NotBlank
+    @NotBlank(message = "Password must not be blank")
     @Column(nullable = false)
     private String password;
 
-    @NotNull
-    @Min(18)
+    @NotNull(message = "Age is required")
+    @Min(value = 18, message = "Age must be at least 18")
     private Integer age;
 
-    @NotNull
+    @NotNull(message = "User role is required")
     @Enumerated(EnumType.STRING)
-    UserRole role;
+    private UserRole role;
 
     public UserEntity() {
     }
