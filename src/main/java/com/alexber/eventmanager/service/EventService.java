@@ -14,10 +14,8 @@ import com.alexber.eventmanager.repository.RegistrationRepository;
 import com.alexber.eventmanager.repository.UserRepository;
 import com.alexber.eventmanager.util.converter.EventDtoConverter;
 import com.alexber.eventmanager.util.converter.EventEntityConverter;
-import com.alexber.eventmanager.util.converter.EventLocationEntityConverter;
 import com.alexber.eventmanager.util.filter.EventSpecification;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -30,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class EventService {
 
-    private final Logger log = LoggerFactory.getLogger(EventService.class);
+    private final Logger logger = LoggerFactory.getLogger(EventService.class);
     private final EventLocationRepository eventLocationRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
@@ -53,7 +51,7 @@ public class EventService {
             EventEntity eventEntity = eventEntityConverter.toEventEntity(event);
             setLocationAndOwner(event, eventEntity);
             eventRepository.save(eventEntity);
-            log.info("Event was created ");
+            logger.info("Event was created ");
             return eventEntityConverter.toEvent(eventEntity);
         } else {
             throw new IllegalArgumentException("Event location is too small");
@@ -66,7 +64,7 @@ public class EventService {
         if (eventEntity.getStatus().equals(EventStatus.WAIT_START)) {
             eventEntity.setStatus(EventStatus.CANCELLED);
             eventRepository.save(eventEntity);
-            log.info("Event with id {} was soft deleted", eventId);
+            logger.info("Event with id {} was soft deleted", eventId);
         } else {
             throw new NotAvailableEventException("Event already started or cancelled");
         }
@@ -74,7 +72,7 @@ public class EventService {
 
     public EventResponseDto getEventById(Long eventId) {
         EventEntity foundedEntity = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " doesn't exist"));
-        log.info("Event with id {} was founded", eventId);
+        logger.info("Event with id {} was founded", eventId);
         return eventDtoConverter.toDto(foundedEntity);
     }
 
@@ -89,7 +87,7 @@ public class EventService {
             event.setDuration(toUpdate.duration());
             setLocationAndOwner(toUpdate, event);
             eventRepository.save(event);
-            log.info("Event with id {} was updated", eventId);
+            logger.info("Event with id {} was updated", eventId);
             return eventEntityConverter.toEvent(event);
         } else {
             throw new IllegalArgumentException("Max places are more then location capacity or registrations amount");
@@ -113,7 +111,7 @@ public class EventService {
             registrationRepository.save(registration);
             event.addRegistration(registration);
             user.addRegistration(registration);
-            log.info("Registration to event id = {} was created", eventId);
+            logger.info("Registration to event id = {} was created", eventId);
         } else {
             throw new StatusEventException("Event already finished or cancelled");
         }
@@ -128,7 +126,7 @@ public class EventService {
             registrationRepository.delete(registration);
             event.removeRegistration(registration);
             user.removeRegistration(registration);
-            log.info("Registration for event id = {} was canceled", eventId);
+            logger.info("Registration for event id = {} was canceled", eventId);
         } else {
             throw new StatusEventException("Event already  started or cancelled or finished");
         }
@@ -159,7 +157,7 @@ public class EventService {
     private EventEntity isAvailable(Long eventId, User user) {
         EventEntity event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " doesn't exist"));
         if (user.role().equals(UserRole.ADMIN) || user.id().equals(event.getOwner().getId())) {
-            log.warn("User does not have permission to delete event {}", eventId);
+            logger.warn("User does not have permission to delete event {}", eventId);
             return event;
         } else {
             throw new AccessDeniedException("User does not have permission to modify event with id = " + eventId);

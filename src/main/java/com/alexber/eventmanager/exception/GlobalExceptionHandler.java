@@ -4,7 +4,6 @@ import com.alexber.eventmanager.exception.customexception.AmountRegistrationExce
 import com.alexber.eventmanager.exception.customexception.NotAvailableEventException;
 import com.alexber.eventmanager.exception.customexception.StatusEventException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
