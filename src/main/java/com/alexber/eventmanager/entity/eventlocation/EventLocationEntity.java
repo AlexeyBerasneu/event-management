@@ -1,9 +1,13 @@
 package com.alexber.eventmanager.entity.eventlocation;
 
+import com.alexber.eventmanager.entity.registration.RegistrationEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "locations")
@@ -12,21 +16,21 @@ public class EventLocationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name",nullable = false)
+    @Column(name = "name", nullable = false)
     @NotBlank
     @Size(max = 150)
     private String name;
 
-    @Column(name = "address",nullable = false)
+    @Column(name = "address", nullable = false)
     @NotBlank
     @Size(max = 150)
     private String address;
 
-    @Column(name = "capacity",nullable = false)
+    @Column(name = "capacity", nullable = false)
     @Min(5)
     private Integer capacity;
 
-    @Column(name = "description",nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
     public EventLocationEntity() {

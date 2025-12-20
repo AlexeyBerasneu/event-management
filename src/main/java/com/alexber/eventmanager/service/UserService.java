@@ -3,7 +3,7 @@ package com.alexber.eventmanager.service;
 import com.alexber.eventmanager.entity.user.User;
 import com.alexber.eventmanager.entity.user.UserEntity;
 import com.alexber.eventmanager.repository.UserRepository;
-import com.alexber.eventmanager.util.UserEntityConverter;
+import com.alexber.eventmanager.util.converter.UserEntityConverter;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,14 @@
 package com.alexber.eventmanager.entity.user;
 
+import com.alexber.eventmanager.entity.registration.RegistrationEntity;
+import com.alexber.eventmanager.exception.customexception.AmountRegistrationException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -27,6 +32,9 @@ public class UserEntity {
     @NotNull(message = "User role is required")
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<RegistrationEntity> registrations = new ArrayList<>();
 
     public UserEntity() {
     }
@@ -77,5 +85,21 @@ public class UserEntity {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public List<RegistrationEntity> getRegistrations() {
+        return registrations;
+    }
+
+    public void addRegistration(RegistrationEntity registration) {
+        registrations.add(registration);
+        registration.setUser(this);
+    }
+
+    public void removeRegistration(RegistrationEntity registration) {
+        if (!registrations.contains(registration)) {
+            throw new AmountRegistrationException("User does not have any registrations");
+        }
+        registrations.remove(registration);
     }
 }

@@ -4,7 +4,7 @@ import com.alexber.eventmanager.entity.user.*;
 import com.alexber.eventmanager.security.jwt.JwtAuthenticationService;
 import com.alexber.eventmanager.security.jwt.JwtTokenResponse;
 import com.alexber.eventmanager.service.UserService;
-import com.alexber.eventmanager.util.UserDtoConverter;
+import com.alexber.eventmanager.util.converter.UserDtoConverter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

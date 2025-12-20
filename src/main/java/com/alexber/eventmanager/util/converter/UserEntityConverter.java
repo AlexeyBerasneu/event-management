@@ -1,4 +1,4 @@
-package com.alexber.eventmanager.util;
+package com.alexber.eventmanager.util.converter;
 
 import com.alexber.eventmanager.entity.user.User;
 import com.alexber.eventmanager.entity.user.UserEntity;
