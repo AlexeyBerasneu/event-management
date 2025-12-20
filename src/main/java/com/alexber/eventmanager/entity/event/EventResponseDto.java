@@ -1,6 +1,5 @@
 package com.alexber.eventmanager.entity.event;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 public record EventResponseDto(

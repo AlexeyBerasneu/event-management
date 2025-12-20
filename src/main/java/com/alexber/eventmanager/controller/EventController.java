@@ -1,9 +1,6 @@
 package com.alexber.eventmanager.controller;
 
-import com.alexber.eventmanager.entity.event.Event;
-import com.alexber.eventmanager.entity.event.EventCreateRequestDto;
-import com.alexber.eventmanager.entity.event.EventResponseDto;
-import com.alexber.eventmanager.entity.event.EventUpdateRequestDto;
+import com.alexber.eventmanager.entity.event.*;
 import com.alexber.eventmanager.entity.user.User;
 import com.alexber.eventmanager.service.EventService;
 import com.alexber.eventmanager.util.converter.EventDtoConverter;
@@ -72,6 +69,13 @@ public class EventController {
         logger.info("Updating event {}", eventId);
         Event updatedEvent = eventService.updateEvent(eventUpdateDtoConverter.toDomain(eventUpdateRequestDto, user.id()), eventId, user);
         return ResponseEntity.ok(eventDtoConverter.toDto(updatedEvent));
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<EventResponseDto>> searchEvents(@RequestBody EventSearchRequestDto searchRequestDto) {
+        logger.info("Searching events for {}", searchRequestDto);
+        List<Event> searchedEvents = eventService.searchEventsWithParam(searchRequestDto);
+        return ResponseEntity.ok(searchedEvents.stream().map(eventDtoConverter::toDto).collect(Collectors.toList()));
     }
 
     @GetMapping("/my")

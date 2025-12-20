@@ -1,9 +1,6 @@
 package com.alexber.eventmanager.service;
 
-import com.alexber.eventmanager.entity.event.Event;
-import com.alexber.eventmanager.entity.event.EventEntity;
-import com.alexber.eventmanager.entity.event.EventResponseDto;
-import com.alexber.eventmanager.entity.event.EventStatus;
+import com.alexber.eventmanager.entity.event.*;
 import com.alexber.eventmanager.entity.eventlocation.EventLocationEntity;
 import com.alexber.eventmanager.entity.registration.RegistrationEntity;
 import com.alexber.eventmanager.entity.user.User;
@@ -18,6 +15,7 @@ import com.alexber.eventmanager.repository.UserRepository;
 import com.alexber.eventmanager.util.converter.EventDtoConverter;
 import com.alexber.eventmanager.util.converter.EventEntityConverter;
 import com.alexber.eventmanager.util.converter.EventLocationEntityConverter;
+import com.alexber.eventmanager.util.filter.EventSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.Positive;
 import org.slf4j.Logger;
@@ -134,6 +132,11 @@ public class EventService {
         } else {
             throw new StatusEventException("Event already  started or cancelled or finished");
         }
+    }
+
+    public List<Event> searchEventsWithParam(EventSearchRequestDto filter) {
+        var eventSpecification = EventSpecification.byFilter(filter);
+        return eventRepository.findAll(eventSpecification).stream().map(eventEntityConverter::toEvent).collect(Collectors.toList());
     }
 
     public List<Event> getEventsByUserId(Long userId) {
