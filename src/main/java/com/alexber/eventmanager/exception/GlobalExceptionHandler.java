@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotAvailableEventException.class)
     public ResponseEntity<ServerErrorDto> handleDeleteEventException(NotAvailableEventException ex) {
-        log.error("Got delete event exception", ex);
+        log.warn("Got delete event exception", ex);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ServerErrorDto(

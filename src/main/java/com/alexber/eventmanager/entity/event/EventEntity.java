@@ -14,11 +14,12 @@ import java.util.List;
 @Entity
 @Table(name = "events")
 public class EventEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Event name must not be empty")
     @Column(name = "event_name")
     private String eventName;
 
@@ -30,28 +31,31 @@ public class EventEntity {
     @JoinColumn(name = "location_id", nullable = false)
     private EventLocationEntity location;
 
-    @Positive
+    @NotNull(message = "Max places is required")
+    @Positive(message = "Max places must be greater than zero")
     @Column(name = "max_places", nullable = false)
     private Integer maxPlaces;
 
+    @NotNull
     @PositiveOrZero
     @Column(name = "occupied_places", nullable = false)
     private Integer occupiedPlaces = 0;
 
-    @FutureOrPresent(message = "Event time must be in the present or future")
+    @NotNull(message = "Event date is required")
+    @FutureOrPresent(message = "Event date must be in the present or future")
     private OffsetDateTime date;
 
-    @NotNull
-    @Min(message = "Cost must equal or more then 0$ ", value = 0)
+    @NotNull(message = "Event cost is required")
+    @Min(value = 0, message = "Event cost must be zero or a positive number")
     private Integer cost;
 
-    @NotNull
-    @Min(message = "Duration time must be equal or more then 30 min", value = 30)
+    @NotNull(message = "Event duration is required")
+    @Min(value = 30, message = "Event duration must be at least 30 minutes")
     private Integer duration;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    EventStatus status;
+    private EventStatus status;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<RegistrationEntity> registrations = new ArrayList<>();

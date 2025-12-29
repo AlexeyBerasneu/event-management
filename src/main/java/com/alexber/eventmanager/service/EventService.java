@@ -16,6 +16,7 @@ import com.alexber.eventmanager.util.converter.EventDtoConverter;
 import com.alexber.eventmanager.util.converter.EventEntityConverter;
 import com.alexber.eventmanager.util.filter.EventSpecification;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class EventService {
 
     private final Logger logger = LoggerFactory.getLogger(EventService.class);
@@ -36,31 +38,22 @@ public class EventService {
     private final EventDtoConverter eventDtoConverter;
     private final EventEntityConverter eventEntityConverter;
 
-    public EventService(EventLocationRepository eventLocationRepository, EventRepository eventRepository, UserRepository userRepository, RegistrationRepository registrationRepository, EventDtoConverter eventDtoConverter, EventEntityConverter eventEntityConverter) {
-        this.eventLocationRepository = eventLocationRepository;
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
-        this.registrationRepository = registrationRepository;
-        this.eventDtoConverter = eventDtoConverter;
-        this.eventEntityConverter = eventEntityConverter;
-    }
-
     public Event createEvent(Event event) {
         EventLocationEntity eventLocation = getEventLocationEntity(event.locationId());
-        if (event.maxPlaces() <= eventLocation.getCapacity()) {
+        if (!(event.maxPlaces() <= eventLocation.getCapacity())) {
+            throw new IllegalArgumentException("Event location is too small");
+        } else {
             EventEntity eventEntity = eventEntityConverter.toEventEntity(event);
             setLocationAndOwner(event, eventEntity);
             eventRepository.save(eventEntity);
             logger.info("Event was created ");
             return eventEntityConverter.toEvent(eventEntity);
-        } else {
-            throw new IllegalArgumentException("Event location is too small");
         }
     }
 
     public void deleteEventById(Long eventId, User user) {
         isAvailable(eventId, user);
-        EventEntity eventEntity = eventRepository.findById(eventId).orElseThrow(EntityNotFoundException::new);
+        EventEntity eventEntity = getEventEntity(eventId);
         if (eventEntity.getStatus().equals(EventStatus.WAIT_START)) {
             eventEntity.setStatus(EventStatus.CANCELLED);
             eventRepository.save(eventEntity);
@@ -71,7 +64,7 @@ public class EventService {
     }
 
     public EventResponseDto getEventById(Long eventId) {
-        EventEntity foundedEntity = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " doesn't exist"));
+        EventEntity foundedEntity = getEventEntity(eventId);
         logger.info("Event with id {} was founded", eventId);
         return eventDtoConverter.toDto(foundedEntity);
     }
@@ -94,17 +87,17 @@ public class EventService {
         }
     }
 
-    public List<Event> getAllEventsByUser(User user) {
+    public List<EventResponseDto> getAllEventsByUser(User user) {
         return eventRepository.findAll()
                 .stream()
                 .filter(eventEntity -> eventEntity.getOwner().getId().equals(user.id()))
-                .map(eventEntityConverter::toEvent)
+                .map(eventDtoConverter::toDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public void registration(Long eventId, Long userId) {
-        EventEntity event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " doesn't exist"));
+        EventEntity event = getEventEntity(eventId);
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " doesn't exist"));
         if (event.getStatus().equals(EventStatus.WAIT_START) || event.getStatus().equals(EventStatus.STARTED)) {
             RegistrationEntity registration = new RegistrationEntity(event, user);
@@ -119,7 +112,7 @@ public class EventService {
 
     @Transactional
     public void cancelRegistration(Long eventId, Long userId) {
-        EventEntity event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " doesn't exist"));
+        EventEntity event = getEventEntity(eventId);
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " doesn't exist"));
         if (event.getStatus().equals(EventStatus.WAIT_START)) {
             RegistrationEntity registration = registrationRepository.findByUser_IdAndEvent_Id(userId, eventId).orElseThrow(() -> new EntityNotFoundException("Registration for user with name = '" + user.getLogin() + "' doesn't exist"));
@@ -137,9 +130,9 @@ public class EventService {
         return eventRepository.findAll(eventSpecification).stream().map(eventEntityConverter::toEvent).collect(Collectors.toList());
     }
 
-    public List<Event> getEventsByUserId(Long userId) {
+    public List<EventResponseDto> getEventsByUserId(Long userId) {
         List<EventEntity> eventEntities = registrationRepository.findAllByUserId(userId);
-        return eventEntities.stream().map(eventEntityConverter::toEvent).collect(Collectors.toList());
+        return eventEntities.stream().map(eventDtoConverter::toDto).collect(Collectors.toList());
     }
 
     private EventEntity setLocationAndOwner(Event event, EventEntity eventEntity) {
@@ -162,5 +155,9 @@ public class EventService {
         } else {
             throw new AccessDeniedException("User does not have permission to modify event with id = " + eventId);
         }
+    }
+
+    private EventEntity getEventEntity(Long eventId) {
+        return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " doesn't exist"));
     }
 }

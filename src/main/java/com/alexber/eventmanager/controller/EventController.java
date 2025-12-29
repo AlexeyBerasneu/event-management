@@ -51,9 +51,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<EventResponseDto> getEvent(@PathVariable
-                                                     @Positive
-                                                     Long eventId) {
+    public ResponseEntity<EventResponseDto> getEvent(@PathVariable @Positive Long eventId) {
         logger.info("Getting event {}", eventId);
         return ResponseEntity.ok(eventService.getEventById(eventId));
     }
@@ -72,17 +70,16 @@ public class EventController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<EventResponseDto>> searchEvents(@RequestBody EventSearchRequestDto searchRequestDto) {
-        logger.info("Searching events for {}", searchRequestDto);
+    public List<EventResponseDto> searchEvents(@RequestBody EventSearchRequestDto searchRequestDto) {
+        logger.info("Searching events with filters");
         List<Event> searchedEvents = eventService.searchEventsWithParam(searchRequestDto);
-        return ResponseEntity.ok(searchedEvents.stream().map(eventDtoConverter::toDto).collect(Collectors.toList()));
+        return searchedEvents.stream().map(eventDtoConverter::toDto).collect(Collectors.toList());
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<EventResponseDto>> getMyEvents(@AuthenticationPrincipal User user) {
+    public List<EventResponseDto> getMyEvents(@AuthenticationPrincipal User user) {
         logger.info("Getting my events");
-        List<EventResponseDto> myEvents = eventService.getAllEventsByUser(user).stream().map(eventDtoConverter::toDto).collect(Collectors.toList());
-        return ResponseEntity.ok(myEvents);
+        return eventService.getAllEventsByUser(user);
     }
 
     @PostMapping("/registrations/{eventId}")
@@ -92,7 +89,7 @@ public class EventController {
                                              @AuthenticationPrincipal User user) {
         logger.info("Registration to event {}", eventId);
         eventService.registration(eventId, user.id());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/registrations/cancel/{eventId}")
@@ -102,12 +99,12 @@ public class EventController {
                                                    @AuthenticationPrincipal User user) {
         logger.info("Cancelling registration for event {}", eventId);
         eventService.cancelRegistration(eventId, user.id());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/registrations/my")
-    public ResponseEntity<List<EventResponseDto>> getMyRegistrations(@AuthenticationPrincipal User user) {
+    public List<EventResponseDto> getMyRegistrations(@AuthenticationPrincipal User user) {
         logger.info("Getting my registrations");
-        return ResponseEntity.ok().body(eventService.getEventsByUserId(user.id()).stream().map(eventDtoConverter::toDto).collect(Collectors.toList()));
+        return eventService.getEventsByUserId(user.id());
     }
 }
