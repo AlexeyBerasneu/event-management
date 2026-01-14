@@ -160,6 +160,13 @@ public class EventEntity {
         this.status = status;
     }
 
+    public void setRegistrations(List<RegistrationEntity> registrations) {
+        if (registrations == null) {
+            throw new AmountRegistrationException("Registrations cannot be null");
+        }
+        this.registrations = registrations;
+    }
+
     public List<RegistrationEntity> getRegistrations() {
         return registrations;
     }
