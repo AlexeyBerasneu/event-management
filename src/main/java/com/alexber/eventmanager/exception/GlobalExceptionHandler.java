@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class,})
     public ResponseEntity<ServerErrorDto> handleValidationException(Exception ex) {
-        log.warn("Got validation exception", ex);
+        logger.warn("Got validation exception", ex);
         String detailMessage = ex instanceof MethodArgumentNotValidException ?
                 constructMethodArgumentNotValidate((MethodArgumentNotValidException) ex) :
                 ex.getMessage();
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ServerErrorDto> handleHandlerMethodValidationException(
             HandlerMethodValidationException ex
     ) {
-        log.warn("Got method parameter validation exception", ex);
+        logger.warn("Got method parameter validation exception", ex);
 
         String detailMessage = ex.getParameterValidationResults().stream()
                 .flatMap(result -> result.getResolvableErrors().stream())
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ServerErrorDto> handleNotFoundException(EntityNotFoundException ex) {
-        log.error("Got not found exception", ex);
+        logger.error("Got not found exception", ex);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ServerErrorDto(
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotAvailableEventException.class)
     public ResponseEntity<ServerErrorDto> handleDeleteEventException(NotAvailableEventException ex) {
-        log.warn("Got delete event exception", ex);
+        logger.warn("Got delete event exception", ex);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ServerErrorDto(
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(StatusEventException.class)
     public ResponseEntity<ServerErrorDto> handleStatusEventException(StatusEventException ex) {
-        log.error("Got status event exception", ex);
+        logger.error("Got status event exception", ex);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ServerErrorDto(
@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ServerErrorDto> handleIllegalStateException(IllegalStateException ex) {
-        log.error("Got amount of occupied event exception", ex);
+        logger.error("Got amount of occupied event exception", ex);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ServerErrorDto(
@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ServerErrorDto> handleAccessDeniedException(AccessDeniedException ex) {
-        log.error("Got access denied exception", ex);
+        logger.error("Got access denied exception", ex);
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(new ServerErrorDto(
@@ -120,7 +120,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AmountRegistrationException.class)
     public ResponseEntity<ServerErrorDto> handleAmountRegistrationException(AmountRegistrationException ex) {
-        log.error("Got registration exception", ex);
+        logger.error("Got registration exception", ex);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new ServerErrorDto(
@@ -132,7 +132,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ServerErrorDto> ConstraintViolationException(ConstraintViolationException ex) {
-        log.error("Got constraint validation exception", ex);
+        logger.error("Got constraint validation exception", ex);
         String message = ex.getConstraintViolations()
                 .stream()
                 .map(v -> String.format(
@@ -151,7 +151,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ServerErrorDto> handleGenericException(Exception ex) {
-        log.error("Got global exception", ex);
+        logger.error("Got global exception", ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ServerErrorDto(
